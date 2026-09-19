@@ -5,7 +5,7 @@ from collections import defaultdict
 from datetime import date, timedelta
 from typing import Literal
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
 
 OperationType = Literal["income", "outcome"]
@@ -149,6 +149,9 @@ def ensure_chronological_order(movements: list[FinancialMovement]) -> list[Finan
 
 def build_metrics_facets(movements: list[FinancialMovement]) -> MetricsFacets:
     ordered = ensure_chronological_order(movements)
+    if not ordered:
+        # ordered[0]/ordered[-1] below require at least one movement
+        raise HTTPException(status_code=404, detail="No movements available to build facets")
     return MetricsFacets(
         operation_types=sorted({item.operation_type for item in ordered}),
         business_types=sorted({item.business_type for item in ordered}),

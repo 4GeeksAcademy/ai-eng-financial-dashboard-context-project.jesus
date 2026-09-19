@@ -1,9 +1,11 @@
 from datetime import date
 
+import pytest
+from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.routes import filter_movements_by_date, generate_mock_movements
+from app.routes import build_metrics_facets, filter_movements_by_date, generate_mock_movements
 
 
 client = TestClient(app)
@@ -187,3 +189,10 @@ def test_metrics_alerts_returns_anomaly_candidates():
             "baseline_average",
             "increase_ratio",
         }
+
+
+def test_build_metrics_facets_raises_404_for_empty_movements():
+    with pytest.raises(HTTPException) as exc_info:
+        build_metrics_facets([])
+
+    assert exc_info.value.status_code == 404
