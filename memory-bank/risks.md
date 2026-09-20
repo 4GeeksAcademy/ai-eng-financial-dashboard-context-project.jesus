@@ -42,3 +42,20 @@ Todos los riesgos listados aquí están además documentados como reglas acciona
 
 ❓ **Parcialmente verificada** — El archivo existe pero su contenido está bloqueado para lectura automatizada en este entorno de trabajo.
 **Riesgo:** documentación o cambios futuros que asuman el formato exacto de esa variable deben confirmarse abriendo el archivo manualmente, no asumiendo su contenido.
+
+## 9. Accesibilidad del dashboard no automatizada
+
+⚠️ **Pendiente** — La auditoría interna `accessibility` identificó necesidades de nombres accesibles para iconos y regiones, anuncios de estados de carga/error, alternativas textuales para gráficos, foco visible y verificación formal de contraste en el frontend (`frontend/src/`). No existe axe, Lighthouse ni una suite de tests de componentes que mantenga estos criterios.
+**Riesgo:** regresiones de teclado, lector de pantalla o contraste pueden llegar a producción sin detección automática.
+**Referencia:** [quality-baseline.md](./quality-baseline.md).
+
+## 10. Rendimiento y metadatos frontend pendientes
+
+⚠️ **Verificada parcialmente** — La auditoría `vercel-react-best-practices` confirmó que el proyecto usa Vite + React, no Next.js, y que no usa `next/image` ni `next/font`. El build pasa, pero genera un chunk minificado superior a 500 kB por la carga inicial de Recharts. `frontend/index.html` todavía contiene metadatos mínimos y el error de carga puede insertar contenido y desplazar el dashboard.
+**Riesgo:** peor LCP/INP, SEO incompleto y posibles desplazamientos de layout (CLS).
+**Referencia:** [quality-baseline.md](./quality-baseline.md).
+
+## 11. Skills de calidad no versionadas
+
+⚠️ **Verificada** — Se aplicaron las prácticas `accessibility` y `vercel-react-best-practices`, pero el repositorio actual no contiene `.agents/skills/`; solo contiene reglas en `.agents/rules/`.
+**Riesgo:** otros agentes no pueden descubrir ni ejecutar automáticamente las skills, y su alcance puede divergir si no se versionan.

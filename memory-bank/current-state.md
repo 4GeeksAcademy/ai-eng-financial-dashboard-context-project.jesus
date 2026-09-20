@@ -5,15 +5,17 @@
 **Qué funciona:**
 - Backend: 16 tests de `pytest` pasan (`python3 -m pytest -q` ejecutado en esta sesión), cubriendo generación de datos mock, filtros por fecha/categoría/tipo, y los 9 endpoints (incluido el guard de lista vacía agregado en `build_metrics_facets`, ver [risks.md](./risks.md) y [../verification.md](../verification.md)).
 - Frontend: build declarado vía `"build": "tsc -b && vite build"` en `frontend/package.json`; tests de lógica (`financial-utils.test.ts`) cubren `computeKPIs`, `computeMonthlyData`, `formatCurrency`, `formatPercent`.
+- Frontend: `npm ci && npm run build` se ejecutó correctamente en la rama de trabajo; Vite dejó una advertencia por un chunk minificado superior a 500 kB.
 - Arranque completo documentado y consistente entre `README.md`, `docker-compose.yml` y los Dockerfiles (`docker compose up --build`).
+- Línea base de calidad documentada en [quality-baseline.md](./quality-baseline.md), incluyendo las auditorías `accessibility` y `vercel-react-best-practices`.
 
 **Qué no está verificado:**
 - Contenido real de `frontend/.env.example` (bloqueado para lectura automatizada en este entorno).
 - Si `frontend/src/lib/mock-data.ts` se usa actualmente en algún componente (no inspeccionado).
-- Comportamiento del frontend compilado/en producción (`npm run build`) — no se ejecutó en esta sesión.
 - Cobertura de tests de componentes React — no existe (`*.test.tsx` ausente en `frontend/src/components/`).
+- Auditoría automatizada de accesibilidad y medición de campo de Core Web Vitals — no existe tooling ni ejecución documentada.
 
-**Riesgos observados:** ver detalle completo con evidencia en [risks.md](./risks.md). Resumen: falta de manejo de errores generalizado en el backend (parcialmente corregido en `build_metrics_facets` en esta sesión), seed de datos mock duplicado en 8 endpoints, tipos de dominio duplicados manualmente backend/frontend, CORS abierto (`allow_origins=["*"]`), ausencia de CI/CD.
+**Riesgos observados:** ver detalle completo con evidencia en [risks.md](./risks.md) y la línea base de calidad en [quality-baseline.md](./quality-baseline.md). Resumen: falta de manejo de errores generalizado en el backend (parcialmente corregido en `build_metrics_facets`), seed de datos mock duplicado en 8 endpoints, tipos de dominio duplicados manualmente backend/frontend, CORS abierto (`allow_origins=["*"]`), bundle inicial grande, gaps de accesibilidad/SEO pendientes y ausencia de CI/CD.
 
 **Próximos pasos razonables** (basados solo en huecos evidenciados, no en roadmap inventado):
 - Replicar el guard de lista vacía (agregado en `build_metrics_facets`) en otras funciones de `routes.py` que indexan listas sin verificar (`calculate_net_value`, `summarize_movements` con listas vacías no se verificaron en esta sesión).

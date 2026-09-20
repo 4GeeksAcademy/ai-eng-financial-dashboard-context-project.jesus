@@ -50,7 +50,7 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
 export function ProfitPercentChart({ data, loading }: ProfitPercentChartProps) {
   if (loading) {
     return (
-      <Card className="border-border/60">
+      <Card aria-hidden="true">
         <CardHeader className="pb-4">
           <Skeleton className="h-5 w-52" />
           <Skeleton className="h-3 w-64 mt-1" />
@@ -65,10 +65,18 @@ export function ProfitPercentChart({ data, loading }: ProfitPercentChartProps) {
   const hasData = data.some((d) => d.profitPercent !== 0)
 
   return (
-    <Card className="border-border/60">
+    <Card
+      role="figure"
+      aria-labelledby="profit-percent-title"
+      aria-describedby="profit-percent-description"
+    >
       <CardHeader className="pb-4">
-        <CardTitle className="text-base font-semibold">Profit Margin %</CardTitle>
-        <CardDescription>Monthly profit as a percentage of total income</CardDescription>
+        <CardTitle id="profit-percent-title" className="text-base font-semibold">
+          Profit Margin %
+        </CardTitle>
+        <CardDescription id="profit-percent-description">
+          Monthly profit as a percentage of total income
+        </CardDescription>
       </CardHeader>
       <CardContent>
         {!hasData ? (
@@ -76,8 +84,10 @@ export function ProfitPercentChart({ data, loading }: ProfitPercentChartProps) {
             No data available to display
           </div>
         ) : (
-          <ResponsiveContainer width="100%" height={280}>
-            <LineChart data={data} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
+          <>
+            <div aria-hidden="true">
+              <ResponsiveContainer width="100%" height={280}>
+                <LineChart data={data} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" strokeOpacity={0.6} />
               <XAxis
                 dataKey="month"
@@ -104,8 +114,27 @@ export function ProfitPercentChart({ data, loading }: ProfitPercentChartProps) {
                 dot={{ r: 3, fill: 'var(--chart-profit)', strokeWidth: 0 }}
                 activeDot={{ r: 5, strokeWidth: 0 }}
               />
-            </LineChart>
-          </ResponsiveContainer>
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+            <table className="sr-only">
+              <caption>Monthly profit margin values</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Month</th>
+                  <th scope="col">Profit margin</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.map((point) => (
+                  <tr key={point.month}>
+                    <th scope="row">{point.month}</th>
+                    <td>{point.profitPercent.toFixed(1)}%</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
         )}
       </CardContent>
     </Card>
