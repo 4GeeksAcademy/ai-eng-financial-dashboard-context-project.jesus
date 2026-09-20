@@ -10,6 +10,12 @@ Especificaciones funcionales del frontend (`frontend/src/`), derivadas directame
 - [income-outcome-chart.md](./income-outcome-chart.md) — `IncomeOutcomeChart`.
 - [profit-percent-chart.md](./profit-percent-chart.md) — `ProfitPercentChart`.
 
+Features del backend aún no consumidas por el frontend (propuestas de implementación, verificadas contra el backend corriendo en `http://localhost:8000`):
+
+- [top-categories.md](./top-categories.md) — feature propuesta para `/api/metrics/categories/top`.
+- [period-comparison.md](./period-comparison.md) — feature propuesta para `/api/metrics/comparison`.
+- [expense-alerts.md](./expense-alerts.md) — feature propuesta para `/api/metrics/alerts`.
+
 ## Convención
 
 - Cada spec documenta únicamente comportamiento verificable en el código citado (props, condicionales, valores por defecto).
