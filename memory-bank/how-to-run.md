@@ -27,3 +27,33 @@ docker compose up --build
 
 ✅ **Verificada** — Backend: `pytest` (dependencia en `requirements.txt`), suite en [backend/tests/test_routes.py](../backend/tests/test_routes.py) y [backend/tests/conftest.py](../backend/tests/conftest.py). No se encontró un script/documentación que indique el comando exacto de invocación (p. ej. no hay `pytest.ini` ni sección en README); el comando estándar `pytest` se infiere de la presencia de la dependencia, no está documentado literalmente.
 ✅ **Verificada** — Frontend: scripts declarados en [frontend/package.json](../frontend/package.json): `"test": "vitest run"`, `"test:watch": "vitest"`, `"test:coverage": "vitest run --coverage"`.
+
+### Smoke tests del dashboard
+
+✅ **Añadida** — La prueba E2E [frontend/e2e/dashboard_smoke.py](../frontend/e2e/dashboard_smoke.py) usa Playwright para verificar la carga exitosa del dashboard, los KPI, los gráficos y el estado accesible de error de la API.
+
+Requisitos locales:
+
+```bash
+python -m pip install -r frontend/e2e/requirements.txt
+python -m playwright install chromium
+```
+
+Con el backend y frontend instalados localmente, ejecuta desde la raíz:
+
+```bash
+python .agents/skills/webapp-testing/scripts/with_server.py \
+	--server "cd backend && uvicorn app.main:app --host 0.0.0.0 --port 8000" \
+	--port 8000 \
+	--server "cd frontend && npm run dev -- --host 0.0.0.0" \
+	--port 5173 \
+	-- python frontend/e2e/dashboard_smoke.py
+```
+
+La prueba intercepta `/api/metrics`, por lo que no depende de datos variables del backend para validar el comportamiento del frontend.
+
+## Validación de calidad del frontend
+
+✅ **Verificada** — Desde `frontend/`, `npm ci && npm run build` instala las dependencias fijadas en `package-lock.json` y ejecuta TypeScript (`tsc -b`) seguido de Vite (`vite build`). La ejecución más reciente terminó sin errores.
+⚠️ **Pendiente** — El build informa un chunk minificado superior a 500 kB. Revisar la línea base de [quality-baseline.md](./quality-baseline.md) antes de considerar cerrado el rendimiento del frontend.
+⚠️ **Pendiente** — No hay comando automatizado para axe/Lighthouse ni medición de Core Web Vitals. La cobertura actual es estática y está documentada en [quality-baseline.md](./quality-baseline.md).
